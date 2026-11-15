@@ -117,8 +117,8 @@ function renderInvitation(invitation, menu, session) {
       <p class="short-date">12/23/26</p>
     </section>
     <section class="sky" aria-hidden="true">
-      <img class="drifter drifter-small" data-drift="right" src="assets/balloon.png" alt="" />
-      <img class="drifter drifter-smaller" data-drift="left" src="assets/balloon.png" alt="" />
+      <span class="drifter drifter-small"><img src="assets/balloon.png" alt="" /></span>
+      <span class="drifter drifter-smaller"><img src="assets/balloon.png" alt="" /></span>
       <img class="hero-balloon" src="assets/balloon.png" alt="" />
     </section>
     <section class="names reveal">
@@ -174,7 +174,6 @@ function renderInvitation(invitation, menu, session) {
   renderMenu();
   renderRsvp(invitation, menu, session, guest2);
   revealOnScroll();
-  floatBalloons();
 }
 
 function art(file, name) {
@@ -203,69 +202,32 @@ function venue(title, place, calendar, side, image) {
   </div>`;
 }
 
-function floatBalloons() {
-  const sky = document.querySelector('.sky');
-  if (!sky || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const random = (min, max) => min + Math.random() * (max - min);
-  const waves = count => Array.from({ length: count }, () => ({
-    period: random(7000, 16000),
-    phase: random(0, Math.PI * 2),
-    size: random(0.4, 1)
-  }));
-  const sway = (list, time) => list.reduce((sum, wave) => sum + wave.size * Math.sin(wave.phase + (time / wave.period) * Math.PI * 2), 0) / list.length;
-  const hero = { img: sky.querySelector('.hero-balloon'), bob: waves(3), tilt: waves(2) };
-  const start = random(0.15, 0.45);
-  const drifters = Array.from(sky.querySelectorAll('[data-drift]'), (img, index) => ({
-    img,
-    toRight: img.dataset.drift === 'right',
-    // About 45 seconds per crossing. The two start half a lap apart so one is usually in view.
-    crossing: random(38000, 52000),
-    offset: (start + index * 0.5) % 1,
-    lane: random(0.32, 0.56),
-    bob: waves(3),
-    tilt: waves(2)
-  }));
-  let visible = true;
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(entries => { visible = entries[0].isIntersecting; }).observe(sky);
-  }
-  const tick = time => {
-    if (visible) {
-      const width = sky.clientWidth;
-      const height = sky.clientHeight;
-      const heroLift = sway(hero.bob, time) * height * 0.025;
-      hero.img.style.transform = `translate(-50%, calc(-50% + ${heroLift.toFixed(1)}px)) rotate(${(sway(hero.tilt, time) * 2).toFixed(2)}deg)`;
-      drifters.forEach(drifter => {
-        const size = drifter.img.offsetWidth;
-        const progress = (drifter.offset + time / drifter.crossing) % 1;
-        const travel = width + size;
-        const x = drifter.toRight ? progress * travel - size : width - progress * travel;
-        const y = drifter.lane * height + sway(drifter.bob, time) * height * 0.09 - drifter.img.offsetHeight / 2;
-        drifter.img.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${(sway(drifter.tilt, time) * 4).toFixed(2)}deg)`;
-      });
-    }
-    requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
-}
-
 function revealOnScroll() {
-  const nodes = document.querySelectorAll('.reveal');
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
-    nodes.forEach(node => node.classList.add('is-visible'));
-    return;
-  }
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('is-visible');
-      observer.unobserve(entry.target);
+  const nodes = Array.from(document.querySelectorAll('.reveal'));
+  const show = node => node.classList.add('is-visible');
+  // iPhone Safari often reports reduced motion, and its scroll root misses IntersectionObserver.
+  // A direct visibility check keeps the fade working there.
+  const showSeen = () => {
+    nodes.forEach(node => {
+      if (node.classList.contains('is-visible')) return;
+      const rect = node.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.92 && rect.bottom > 24) show(node);
     });
-  }, { threshold: 0.12 });
-  // Wait until the hidden state has painted, or the first screen appears without a fade.
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => nodes.forEach(node => observer.observe(node)));
-  });
+  };
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        show(entry.target);
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.08 });
+    nodes.forEach(node => observer.observe(node));
+  }
+  window.addEventListener('scroll', showSeen, { passive: true });
+  window.addEventListener('resize', showSeen);
+  window.addEventListener('touchmove', showSeen, { passive: true });
+  setTimeout(showSeen, 80);
 }
 
 function previewBanner(party) {
