@@ -117,16 +117,16 @@ function renderInvitation(invitation, menu, session) {
       <p class="short-date">12/23/26</p>
     </section>
     ${art('balloon.png', 'balloon')}
-    <section class="screen reveal">
-      <div class="frame">
-        <div class="frame-inner">
-          <p class="newlyweds">Newlyweds</p>
-          <h1><span>Monica</span><span class="amp">&amp;</span><span>Nathaniel</span></h1>
-          <p class="invite">${inviteLine(invitation)}</p>
-          <p class="date-line"><strong>Wednesday, December 23, 2026</strong></p>
-          <p class="date-line"><strong>in San Francisco.</strong></p>
-        </div>
+    <section class="names reveal">
+      <img class="floral" src="assets/floral-top.png" alt="" />
+      <div class="names-copy">
+        <p class="newlyweds">Newlyweds</p>
+        <h1><span>Monica</span><span class="amp">&amp;</span><span>Nathaniel</span></h1>
+        <p class="invite">${inviteLine(invitation)}</p>
+        <p class="date-line"><strong>Wednesday, December 23, 2026</strong></p>
+        <p class="date-line"><strong>in San Francisco.</strong></p>
       </div>
+      <img class="floral" src="assets/floral-bottom.png" alt="" />
     </section>
     ${art('city-hall.png', 'city-hall')}
     <section class="panel reveal">
@@ -153,8 +153,7 @@ function renderInvitation(invitation, menu, session) {
     ${art('bay-bridge.png', 'bridge')}
     <section class="panel reveal dress">
       <h2>Dress code</h2>
-      <p class="dress-code">Formal</p>
-      <p>This is a formal celebration. San Francisco winter can turn cool, so we suggest dressing in layers.</p>
+      <p>Come celebrate with us in cocktail attire. Suits, dress shirts with ties, and midi dresses are encouraged. We also suggest dressing in layers for the cool winter.</p>
     </section>
     <section class="panel reveal transport">
       <h2>Transportation</h2>
@@ -162,7 +161,7 @@ function renderInvitation(invitation, menu, session) {
       <p>For San Francisco City Hall, the parking garage in front of the building is the best option.</p>
       <p>For Epic Steak, Hills Plaza parking garage is the closest option on the Embarcadero. There is no valet.</p>
     </section>
-    <section class="panel reveal" id="menu-panel"></section>
+    <section class="menu-block reveal" id="menu-panel"></section>
     ${art('mistletoe.png', 'mistletoe')}
     <section class="panel reveal" id="rsvp-panel"></section>
     <footer class="closing reveal">
@@ -174,10 +173,12 @@ function renderInvitation(invitation, menu, session) {
   renderMenu();
   renderRsvp(invitation, menu, session, guest2);
   revealOnScroll();
+  bindBalloon();
 }
 
 function art(file, name) {
-  return `<figure class="art art-${name} reveal" aria-hidden="true"><img src="assets/${file}" alt="" /></figure>`;
+  const reveal = name === 'balloon' ? '' : ' reveal';
+  return `<figure class="art art-${name}${reveal}" aria-hidden="true"><img src="assets/${file}" alt="" /></figure>`;
 }
 
 function inviteLine(invitation) {
@@ -199,6 +200,25 @@ function venue(title, place, calendar, side) {
       <a class="button secondary" href="${calendar}" target="_blank" rel="noopener noreferrer">Add to calendar</a>
     </div>
   </div>`;
+}
+
+function bindBalloon() {
+  const balloon = document.querySelector('.art-balloon');
+  const img = balloon && balloon.querySelector('img');
+  if (!img || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let frame = 0;
+  const update = () => {
+    frame = 0;
+    const rect = balloon.getBoundingClientRect();
+    const traveled = window.innerHeight * 0.72 - rect.top;
+    const progress = Math.min(1, Math.max(0, traveled / (window.innerHeight * 0.85)));
+    img.style.transform = `translate3d(0, ${(-progress * 90).toFixed(1)}px, 0)`;
+    img.style.opacity = String(1 - progress * 0.8);
+  };
+  window.addEventListener('scroll', () => {
+    if (!frame) frame = requestAnimationFrame(update);
+  }, { passive: true });
+  update();
 }
 
 function revealOnScroll() {
@@ -237,13 +257,17 @@ function renderMenu() {
       </ul>
     </div>`).join('');
   panel.innerHTML = `
-    <h2>Menu</h2>
-    <p>Main course will be chosen by you on the day of the reception. Vegan upon request.</p>
-    ${courses}
-    <div class="menu-course">
-      <h3>Dessert</h3>
-      <ul class="dishes"><li><strong>S'mores Cake</strong><span>Chocolate ganache and graham crust</span></li></ul>
-    </div>`;
+    <img class="menu-art" src="assets/waiters-top.png" alt="" />
+    <div class="menu-copy">
+      <h2>Menu</h2>
+      <p>Main course will be chosen by you on the day of the reception. Vegan upon request.</p>
+      ${courses}
+      <div class="menu-course">
+        <h3>Dessert</h3>
+        <ul class="dishes"><li><strong>S'mores Cake</strong><span>Chocolate ganache and graham crust</span></li></ul>
+      </div>
+    </div>
+    <img class="menu-art" src="assets/waiters-bottom.png" alt="" />`;
 }
 
 function renderRsvp(invitation, menu, session, guest2) {
