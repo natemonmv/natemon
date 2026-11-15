@@ -41,6 +41,7 @@ main {
   width: min(100%, 42rem);
   margin: 0 auto;
   padding: 1.25rem 1.15rem 4rem;
+  overflow-x: clip;
 }
 
 .loading, .gate {
