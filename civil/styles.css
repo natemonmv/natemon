@@ -172,7 +172,15 @@ h2 { font-size: clamp(2.1rem, 9vw, 2.8rem); text-align: center; margin: 0.2rem 0
 }
 
 label.field .fine { margin: 0; max-width: none; }
-label.attend { align-items: center; white-space: nowrap; }
+label.attend { align-items: flex-start; white-space: normal; }
+
+.newlyweds {
+  font-family: var(--script);
+  font-size: clamp(2.4rem, 11vw, 3.4rem);
+  line-height: 1;
+  color: var(--peridot-deep);
+  margin: 0 0 0.35rem;
+}
 
 .family {
   font-family: var(--script);
@@ -234,6 +242,12 @@ a.button, button {
   cursor: pointer;
 }
 
+button.send {
+  display: block;
+  width: fit-content;
+  margin: 1.1rem auto 0;
+}
+
 a.button.secondary, button.secondary {
   background: transparent;
   color: var(--peridot-deep);
@@ -243,13 +257,14 @@ a.button.secondary, button.secondary {
 
 .timeline li {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.15rem;
+  grid-template-columns: 11.4rem 1fr;
+  gap: 0.45rem 0.7rem;
+  align-items: baseline;
   padding: 0.75rem 0;
   border-top: 1px solid var(--line);
 }
 
-.timeline time { color: var(--peridot-deep); font-style: italic; white-space: nowrap; font-size: 1.05rem; padding-top: 0.1rem; }
+.timeline time { color: var(--peridot-deep); font-style: italic; white-space: nowrap; font-size: 0.95rem; padding-top: 0.1rem; }
 
 .dress, .transport { text-align: center; }
 .transport p { max-width: 24rem; margin-left: auto; margin-right: auto; }
