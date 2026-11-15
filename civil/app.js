@@ -120,7 +120,6 @@ function renderInvitation(invitation, menu, session) {
     <section class="names reveal">
       <img class="floral" src="assets/floral-top.png" alt="" />
       <div class="names-copy">
-        <p class="newlyweds">Newlyweds</p>
         <h1><span>Monica</span><span class="amp">&amp;</span><span>Nathaniel</span></h1>
         <p class="invite">${inviteLine(invitation)}</p>
         <p class="date-line"><strong>Wednesday, December 23, 2026</strong></p>
@@ -128,12 +127,11 @@ function renderInvitation(invitation, menu, session) {
       </div>
       <img class="floral" src="assets/floral-bottom.png" alt="" />
     </section>
-    ${art('city-hall.png', 'city-hall')}
     <section class="panel reveal">
       <h2>Ceremony &amp; Reception</h2>
       <div class="venues">
-        ${venue('Ceremony', CITY_HALL, calendarUrl('Civil ceremony of Monica and Nathaniel Villegas', CEREMONY_START, CEREMONY_END, CITY_HALL), 'left')}
-        ${venue('Reception', EPIC, calendarUrl('Reception for Monica and Nathaniel Villegas', RECEPTION_START, RECEPTION_END, EPIC), 'right')}
+        ${venue('Ceremony', CITY_HALL, calendarUrl('Civil ceremony of Monica and Nathaniel Villegas', CEREMONY_START, CEREMONY_END, CITY_HALL), 'left', 'city-hall.png')}
+        ${venue('Reception', EPIC, calendarUrl('Reception for Monica and Nathaniel Villegas', RECEPTION_START, RECEPTION_END, EPIC), 'right', 'bay-bridge.png')}
       </div>
     </section>
     <section class="panel reveal">
@@ -146,11 +144,11 @@ function renderInvitation(invitation, menu, session) {
         <li><time>4:00 p.m. onward</time><span>Nightcap at a holiday-themed bar. Optional.</span></li>
       </ol>
     </section>
+    ${art('mistletoe.png', 'mistletoe')}
     <section class="panel reveal">
       <h2>Afterward</h2>
       <p>After the reception, join us for a nightcap at a holiday-themed bar. It's a festive tradition Monica and Nathaniel have shared since they started dating, and they want to continue it with you all. Details to be shared here closer to the day.</p>
     </section>
-    ${art('bay-bridge.png', 'bridge')}
     <section class="panel reveal dress">
       <h2>Dress code</h2>
       <p>Come celebrate with us in cocktail attire. Suits, dress shirts with ties, and midi dresses are encouraged. We also suggest dressing in layers for the cool winter.</p>
@@ -162,7 +160,6 @@ function renderInvitation(invitation, menu, session) {
       <p>For Epic Steak, Hills Plaza parking garage is the closest option on the Embarcadero. There is no valet.</p>
     </section>
     <section class="menu-block reveal" id="menu-panel"></section>
-    ${art('mistletoe.png', 'mistletoe')}
     <section class="panel reveal" id="rsvp-panel"></section>
     <footer class="closing reveal">
       <h2>With love,</h2>
@@ -188,7 +185,7 @@ function inviteLine(invitation) {
   return `cordially invite ${guests} to their private civil ceremony on`;
 }
 
-function venue(title, place, calendar, side) {
+function venue(title, place, calendar, side, image) {
   return `<div class="venue venue-${side}">
     <p class="kicker">${title}</p>
     <p class="place"><strong>${place.name}</strong></p>
@@ -199,25 +196,40 @@ function venue(title, place, calendar, side) {
       <a class="button secondary" href="${place.maps}" target="_blank" rel="noopener noreferrer">Open in Maps</a>
       <a class="button secondary" href="${calendar}" target="_blank" rel="noopener noreferrer">Add to calendar</a>
     </div>
+    ${image ? `<img class="venue-art" src="assets/${image}" alt="" />` : ''}
   </div>`;
 }
 
 function bindBalloon() {
-  const balloon = document.querySelector('.art-balloon');
-  const img = balloon && balloon.querySelector('img');
-  if (!img || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const rail = document.querySelector('.art-balloon');
+  const img = rail && rail.querySelector('img');
+  if (!img) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let frame = 0;
   const update = () => {
     frame = 0;
-    const rect = balloon.getBoundingClientRect();
-    const traveled = window.innerHeight * 0.72 - rect.top;
-    const progress = Math.min(1, Math.max(0, traveled / (window.innerHeight * 0.85)));
-    img.style.transform = `translate3d(0, ${(-progress * 90).toFixed(1)}px, 0)`;
-    img.style.opacity = String(1 - progress * 0.8);
+    if (reduced) {
+      img.style.transform = 'none';
+      return;
+    }
+    const rect = rail.getBoundingClientRect();
+    const viewH = window.innerHeight;
+    const imgW = img.offsetWidth;
+    const imgH = img.offsetHeight;
+    const roomX = Math.max(0, rail.clientWidth - imgW);
+    const roomY = Math.max(0, rect.height - imgH);
+    // 0 at the bottom right as the rail enters, 1 at the top left as it leaves.
+    // The spot on screen follows the scroll, so scrolling up runs it backward.
+    const progress = Math.min(1, Math.max(0, (viewH - rect.top) / (viewH + rect.height)));
+    const x = (1 - progress) * roomX;
+    const yOnScreen = (1 - progress) * Math.max(0, viewH - imgH);
+    const y = Math.min(roomY, Math.max(0, yOnScreen - rect.top));
+    img.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
   };
   window.addEventListener('scroll', () => {
     if (!frame) frame = requestAnimationFrame(update);
   }, { passive: true });
+  window.addEventListener('resize', update);
   update();
 }
 
@@ -257,17 +269,23 @@ function renderMenu() {
       </ul>
     </div>`).join('');
   panel.innerHTML = `
-    <img class="menu-art" src="assets/waiters-top.png" alt="" />
-    <div class="menu-copy">
-      <h2>Menu</h2>
-      <p>Main course will be chosen by you on the day of the reception. Vegan upon request.</p>
-      ${courses}
-      <div class="menu-course">
-        <h3>Dessert</h3>
-        <ul class="dishes"><li><strong>S'mores Cake</strong><span>Chocolate ganache and graham crust</span></li></ul>
+    <div class="menu-stage">
+      <img class="menu-art menu-art-top" src="assets/waiters-top.png" alt="" />
+      <div class="menu-copy">
+        <h2>Menu</h2>
+        <p class="menu-intro">Main course will be chosen by you on the day of the reception. Vegan upon request.</p>
+        ${courses}
       </div>
     </div>
-    <img class="menu-art" src="assets/waiters-bottom.png" alt="" />`;
+    <div class="dessert-stage">
+      <img class="menu-art menu-art-bottom" src="assets/waiters-bottom.png" alt="" />
+      <div class="dessert-copy">
+        <div class="menu-course">
+          <h3>Dessert</h3>
+          <ul class="dishes"><li><strong>S'mores Cake</strong><span>Chocolate ganache and graham crust</span></li></ul>
+        </div>
+      </div>
+    </div>`;
 }
 
 function renderRsvp(invitation, menu, session, guest2) {
