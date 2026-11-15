@@ -15,6 +15,8 @@
 
 html { scroll-behavior: smooth; }
 
+html, body { overflow-x: clip; }
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -83,6 +85,13 @@ main {
   margin: 0 auto;
 }
 
+.screen .monogram {
+  width: min(156vw, 40rem);
+  max-width: none;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
 .gate .monogram { width: min(42vw, 9rem); margin-bottom: 0.8rem; }
 
 .scroll-cue {
@@ -139,14 +148,6 @@ h2 { font-size: clamp(2.1rem, 9vw, 2.8rem); text-align: center; margin: 0.2rem 0
 
 label.field .fine { margin: 0; max-width: none; }
 label.attend { align-items: flex-start; white-space: normal; }
-
-.newlyweds {
-  font-family: var(--script);
-  font-size: clamp(2.4rem, 11vw, 3.4rem);
-  line-height: 1;
-  color: var(--peridot-deep);
-  margin: 0 0 0.35rem;
-}
 
 .family {
   font-family: var(--script);
@@ -223,14 +224,22 @@ a.button.secondary, button.secondary {
 
 .timeline li {
   display: grid;
-  grid-template-columns: 11.4rem 1fr;
-  gap: 0.45rem 0.7rem;
-  align-items: baseline;
-  padding: 0.75rem 0;
+  grid-template-columns: 7.2rem minmax(0, 1fr);
+  gap: 0.15rem 0.45rem;
+  align-items: start;
+  padding: 0.65rem 0;
   border-top: 1px solid var(--line);
 }
 
-.timeline time { color: var(--peridot-deep); font-style: italic; white-space: nowrap; font-size: 0.95rem; padding-top: 0.1rem; }
+.timeline time, .timeline span { min-width: 0; }
+
+.timeline time {
+  color: var(--peridot-deep);
+  font-style: italic;
+  font-size: 0.98rem;
+  line-height: 1.25;
+  padding-top: 0.12rem;
+}
 
 .dress, .transport { text-align: center; }
 .transport p { max-width: 24rem; margin-left: auto; margin-right: auto; }
@@ -322,23 +331,100 @@ textarea { min-height: 6.5rem; resize: vertical; }
 
 .success h2 { margin-top: 0; }
 
-.names { text-align: center; margin: 0.4rem 0 0.2rem; }
-.floral, .menu-art { display: block; width: min(100%, 36rem); height: auto; margin: 0 auto; }
+.names {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 2rem 0;
+  padding: 2.5rem 0;
+}
+.floral { display: block; width: min(100%, 36rem); height: auto; margin: 0 auto; }
 .names-copy { margin: -0.15rem 0.4rem; }
 .names .invite { margin-top: 0.7rem; }
 .date-line, .date-line strong { font-style: normal; font-weight: 600; }
 .date-line { margin-top: 0.15rem; }
 
-.menu-block { margin: 0.4rem 0 0.2rem; text-align: center; }
-.menu-copy { margin: 0.15rem 0.35rem 0.2rem; }
+.venue-art {
+  display: block;
+  width: calc(100% + 1.2rem);
+  max-width: none;
+  height: auto;
+  margin: 1.15rem -0.6rem -0.35rem;
+}
+
+.menu-block { margin: 0.4rem 0 18vh; text-align: center; }
 .menu-block h2 { margin-bottom: 0.45rem; }
+
+.menu-stage, .dessert-stage { position: relative; }
+
+.menu-art {
+  display: block;
+  height: auto;
+  max-width: none;
+  pointer-events: none;
+}
+
+.menu-art-top {
+  position: absolute;
+  top: 0;
+  width: 222%;
+  left: -51.7%;
+}
+
+.menu-copy {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 68% 15% 0.15rem;
+}
+
+.menu-intro { margin: 0.2rem auto 0; max-width: 22rem; }
+
+.dessert-stage { margin-top: -0.5rem; }
+
+.menu-art-bottom {
+  width: 307%;
+  margin-left: -103.6%;
+}
+
+.dessert-copy {
+  position: absolute;
+  top: 30%;
+  left: 16%;
+  right: 16%;
+  z-index: 1;
+}
+
+.dessert-copy .menu-course { margin: 0; }
+.dessert-copy .dishes { margin-top: 0.15rem; }
+.dessert-copy .dishes li { border-top: 0; padding-top: 0.15rem; }
 
 .art { margin: 1.5rem auto; text-align: center; }
 .art img { display: block; width: 100%; height: auto; margin: 0 auto; }
-.art-balloon { margin: 0.2rem auto 0; }
-.art-balloon img { width: min(78vw, 22rem); will-change: transform, opacity; }
-.art-city-hall img { width: min(100%, 34rem); }
-.art-bridge { margin-left: -1.15rem; margin-right: -1.15rem; }
+
+.art-balloon {
+  position: relative;
+  width: 100vw;
+  height: 118vh;
+  margin-top: 22vh;
+  margin-bottom: 20vh;
+  margin-left: calc(50% - 50vw);
+  overflow: hidden;
+}
+
+.art-balloon img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: min(42vw, 15rem);
+  margin: 0;
+  will-change: transform;
+}
+
+.art-mistletoe { margin: 16vh auto 1.25rem; }
 .art-mistletoe img { width: min(58vw, 14rem); }
 
 .reveal {
@@ -356,5 +442,10 @@ textarea { min-height: 6.5rem; resize: vertical; }
 @media (min-width: 800px) {
   main { padding-top: 2.5rem; }
   .panel { padding: 1.8rem 1.7rem 1.9rem; }
-  .art-bridge { margin-left: 0; margin-right: 0; }
+  .venue-art { width: 100%; margin-left: 0; margin-right: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art-balloon { height: auto; margin-top: 8vh; margin-bottom: 8vh; overflow: visible; }
+  .art-balloon img { position: relative; width: min(62vw, 18rem); margin: 0 auto; }
 }
