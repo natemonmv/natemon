@@ -86,7 +86,7 @@ main {
 }
 
 .screen .monogram {
-  width: min(156vw, 40rem);
+  width: min(132vw, 34rem);
   max-width: none;
   margin-left: 50%;
   transform: translateX(-50%);
@@ -242,6 +242,7 @@ a.button.secondary, button.secondary {
 }
 
 .dress, .transport { text-align: center; }
+.panel.transport { margin-bottom: 16vh; }
 .transport p { max-width: 24rem; margin-left: auto; margin-right: auto; }
 
 .dress-code {
@@ -253,32 +254,32 @@ a.button.secondary, button.secondary {
 
 .menu-course h3 {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 0.02em;
 }
 
 .menu-note {
-  margin: 0.2rem 0 0;
-  max-width: none;
-  font-size: 0.95rem;
+  margin: 0.15rem auto 0;
+  max-width: 16rem;
+  font-size: 0.82rem;
   color: var(--muted);
 }
 
 .dress-code { margin: 0 0 0.6rem; font-size: 1.35rem; letter-spacing: 0.14em; text-transform: uppercase; }
 
-.menu-course { margin: 1.3rem 0 1.5rem; }
+.menu-course { margin: 0.95rem auto 1rem; max-width: 16rem; }
 
-.dishes { list-style: none; margin: 0.7rem 0 0; padding: 0; }
+.dishes { list-style: none; margin: 0.35rem auto 0; padding: 0; max-width: 16rem; }
 
 .dishes li {
-  padding: 0.7rem 0;
+  padding: 0.42rem 0;
   border-top: 1px solid var(--line);
 }
 
-.dishes strong { display: block; font-size: 18px; font-weight: 600; }
+.dishes strong { display: block; font-size: 0.95rem; font-weight: 600; }
 
-.dishes span { display: block; color: var(--muted); font-size: 1.05rem; }
+.dishes span { display: block; color: var(--muted); font-size: 0.82rem; }
 
 .guest-block {
   margin: 1rem 0;
@@ -338,11 +339,17 @@ textarea { min-height: 6.5rem; resize: vertical; }
   align-items: center;
   justify-content: center;
   text-align: center;
-  margin: 2rem 0;
+  margin: 2rem 0 16vh;
   padding: 2.5rem 0;
 }
-.floral { display: block; width: min(100%, 36rem); height: auto; margin: 0 auto; }
-.names-copy { margin: -0.15rem 0.4rem; }
+.floral {
+  display: block;
+  width: min(112vw, 44rem);
+  max-width: none;
+  height: auto;
+  flex: none;
+}
+.names-copy { margin: 0.35rem 0.4rem; }
 .names .invite { margin-top: 0.7rem; }
 .date-line, .date-line strong { font-style: normal; font-weight: 600; }
 .date-line { margin-top: 0.15rem; }
@@ -356,76 +363,71 @@ textarea { min-height: 6.5rem; resize: vertical; }
 }
 
 .menu-block { margin: 0.4rem 0 18vh; text-align: center; }
-.menu-block h2 { margin-bottom: 0.45rem; }
-
-.menu-stage, .dessert-stage { position: relative; }
+.menu-block h2 { margin: 0 0 0.45rem; }
 
 .menu-art {
   display: block;
-  height: auto;
+  width: min(100vw, 40rem);
   max-width: none;
-  pointer-events: none;
+  height: auto;
+  margin-left: 50%;
+  transform: translateX(-50%);
 }
 
 .menu-art-top {
-  position: absolute;
-  top: 0;
-  width: 222%;
-  left: -51.7%;
-}
-
-.menu-copy {
   position: relative;
   z-index: 1;
-  margin: 0;
-  padding: 68% 15% 0.15rem;
+  margin-bottom: -4.15rem;
+  pointer-events: none;
 }
-
-.menu-intro { margin: 0.2rem auto 0; max-width: 22rem; }
-
-.dessert-stage { margin-top: -0.5rem; }
-
-.menu-art-bottom {
-  width: 307%;
-  margin-left: -103.6%;
-}
-
-.dessert-copy {
-  position: absolute;
-  top: 30%;
-  left: 16%;
-  right: 16%;
-  z-index: 1;
-}
-
-.dessert-copy .menu-course { margin: 0; }
-.dessert-copy .dishes { margin-top: 0.15rem; }
-.dessert-copy .dishes li { border-top: 0; padding-top: 0.15rem; }
+.menu-copy { margin: 0 auto 0.4rem; max-width: 17rem; }
+.menu-intro { margin: 0.45rem auto 0; max-width: 15rem; font-style: italic; font-size: 0.82rem; line-height: 1.45; }
+.menu-copy .menu-course:last-child { margin-bottom: 0.6rem; }
 
 .art { margin: 1.5rem auto; text-align: center; }
 .art img { display: block; width: 100%; height: auto; margin: 0 auto; }
 
-.art-balloon {
+.sky {
   position: relative;
   width: 100vw;
-  height: 118vh;
-  margin-top: 22vh;
-  margin-bottom: 20vh;
-  margin-left: calc(50% - 50vw);
+  height: 100vh;
+  height: 100lvh;
+  margin: 6vh 0 6vh calc(50% - 50vw);
   overflow: hidden;
 }
 
-.art-balloon img {
+.sky img {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: min(42vw, 15rem);
-  margin: 0;
+  height: auto;
+  max-width: none;
   will-change: transform;
 }
 
-.art-mistletoe { margin: 16vh auto 1.25rem; }
-.art-mistletoe img { width: min(58vw, 14rem); }
+.hero-balloon {
+  z-index: 3;
+  left: 50%;
+  top: 50%;
+  width: min(62vw, 19rem);
+  transform: translate(-50%, -50%);
+}
+
+.drifter { left: 0; top: 0; transform: translate(-200vw, 0); }
+.drifter-small { z-index: 2; width: min(30vw, 9rem); }
+.drifter-smaller { z-index: 1; width: min(19vw, 6rem); }
+
+.art-mistletoe {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  margin: 6vh auto;
+}
+.art-mistletoe img { width: min(58vw, 14rem); animation: hang 9s ease-in-out infinite alternate; }
+
+@keyframes hang {
+  from { transform: translateY(-6px) rotate(-1.5deg); }
+  to { transform: translateY(6px) rotate(1.5deg); }
+}
 
 .reveal {
   opacity: 0;
@@ -446,6 +448,6 @@ textarea { min-height: 6.5rem; resize: vertical; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .art-balloon { height: auto; margin-top: 8vh; margin-bottom: 8vh; overflow: visible; }
-  .art-balloon img { position: relative; width: min(62vw, 18rem); margin: 0 auto; }
+  .drifter { display: none; }
+  .art-mistletoe img { animation: none; }
 }
