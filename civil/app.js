@@ -116,7 +116,11 @@ function renderInvitation(invitation, menu, session) {
       <p class="eyebrow">Our private civil ceremony</p>
       <p class="short-date">12/23/26</p>
     </section>
-    ${art('balloon.png', 'balloon')}
+    <section class="sky" aria-hidden="true">
+      <img class="drifter drifter-small" data-drift="right" src="assets/balloon.png" alt="" />
+      <img class="drifter drifter-smaller" data-drift="left" src="assets/balloon.png" alt="" />
+      <img class="hero-balloon" src="assets/balloon.png" alt="" />
+    </section>
     <section class="names reveal">
       <img class="floral" src="assets/floral-top.png" alt="" />
       <div class="names-copy">
@@ -170,12 +174,11 @@ function renderInvitation(invitation, menu, session) {
   renderMenu();
   renderRsvp(invitation, menu, session, guest2);
   revealOnScroll();
-  bindBalloon();
+  floatBalloons();
 }
 
 function art(file, name) {
-  const reveal = name === 'balloon' ? '' : ' reveal';
-  return `<figure class="art art-${name}${reveal}" aria-hidden="true"><img src="assets/${file}" alt="" /></figure>`;
+  return `<figure class="art art-${name} reveal" aria-hidden="true"><img src="assets/${file}" alt="" /></figure>`;
 }
 
 function inviteLine(invitation) {
@@ -200,37 +203,50 @@ function venue(title, place, calendar, side, image) {
   </div>`;
 }
 
-function bindBalloon() {
-  const rail = document.querySelector('.art-balloon');
-  const img = rail && rail.querySelector('img');
-  if (!img) return;
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let frame = 0;
-  const update = () => {
-    frame = 0;
-    if (reduced) {
-      img.style.transform = 'none';
-      return;
+function floatBalloons() {
+  const sky = document.querySelector('.sky');
+  if (!sky || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const random = (min, max) => min + Math.random() * (max - min);
+  const waves = count => Array.from({ length: count }, () => ({
+    period: random(7000, 16000),
+    phase: random(0, Math.PI * 2),
+    size: random(0.4, 1)
+  }));
+  const sway = (list, time) => list.reduce((sum, wave) => sum + wave.size * Math.sin(wave.phase + (time / wave.period) * Math.PI * 2), 0) / list.length;
+  const hero = { img: sky.querySelector('.hero-balloon'), bob: waves(3), tilt: waves(2) };
+  const start = random(0.15, 0.45);
+  const drifters = Array.from(sky.querySelectorAll('[data-drift]'), (img, index) => ({
+    img,
+    toRight: img.dataset.drift === 'right',
+    // About 45 seconds per crossing. The two start half a lap apart so one is usually in view.
+    crossing: random(38000, 52000),
+    offset: (start + index * 0.5) % 1,
+    lane: random(0.32, 0.56),
+    bob: waves(3),
+    tilt: waves(2)
+  }));
+  let visible = true;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(entries => { visible = entries[0].isIntersecting; }).observe(sky);
+  }
+  const tick = time => {
+    if (visible) {
+      const width = sky.clientWidth;
+      const height = sky.clientHeight;
+      const heroLift = sway(hero.bob, time) * height * 0.025;
+      hero.img.style.transform = `translate(-50%, calc(-50% + ${heroLift.toFixed(1)}px)) rotate(${(sway(hero.tilt, time) * 2).toFixed(2)}deg)`;
+      drifters.forEach(drifter => {
+        const size = drifter.img.offsetWidth;
+        const progress = (drifter.offset + time / drifter.crossing) % 1;
+        const travel = width + size;
+        const x = drifter.toRight ? progress * travel - size : width - progress * travel;
+        const y = drifter.lane * height + sway(drifter.bob, time) * height * 0.09 - drifter.img.offsetHeight / 2;
+        drifter.img.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${(sway(drifter.tilt, time) * 4).toFixed(2)}deg)`;
+      });
     }
-    const rect = rail.getBoundingClientRect();
-    const viewH = window.innerHeight;
-    const imgW = img.offsetWidth;
-    const imgH = img.offsetHeight;
-    const roomX = Math.max(0, rail.clientWidth - imgW);
-    const roomY = Math.max(0, rect.height - imgH);
-    // 0 at the bottom right as the rail enters, 1 at the top left as it leaves.
-    // The spot on screen follows the scroll, so scrolling up runs it backward.
-    const progress = Math.min(1, Math.max(0, (viewH - rect.top) / (viewH + rect.height)));
-    const x = (1 - progress) * roomX;
-    const yOnScreen = (1 - progress) * Math.max(0, viewH - imgH);
-    const y = Math.min(roomY, Math.max(0, yOnScreen - rect.top));
-    img.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+    requestAnimationFrame(tick);
   };
-  window.addEventListener('scroll', () => {
-    if (!frame) frame = requestAnimationFrame(update);
-  }, { passive: true });
-  window.addEventListener('resize', update);
-  update();
+  requestAnimationFrame(tick);
 }
 
 function revealOnScroll() {
@@ -269,23 +285,17 @@ function renderMenu() {
       </ul>
     </div>`).join('');
   panel.innerHTML = `
-    <div class="menu-stage">
-      <img class="menu-art menu-art-top" src="assets/waiters-top.png" alt="" />
-      <div class="menu-copy">
-        <h2>Menu</h2>
-        <p class="menu-intro">Main course will be chosen by you on the day of the reception. Vegan upon request.</p>
-        ${courses}
+    <img class="menu-art menu-art-top" src="assets/waiters-top.png" alt="" />
+    <div class="menu-copy">
+      <h2>Menu</h2>
+      <p class="menu-intro">Main course will be chosen by you on the day of the reception. Vegan upon request.</p>
+      ${courses}
+      <div class="menu-course">
+        <h3>Dessert</h3>
+        <ul class="dishes"><li><strong>S'mores Cake</strong><span>Chocolate ganache and graham crust</span></li></ul>
       </div>
     </div>
-    <div class="dessert-stage">
-      <img class="menu-art menu-art-bottom" src="assets/waiters-bottom.png" alt="" />
-      <div class="dessert-copy">
-        <div class="menu-course">
-          <h3>Dessert</h3>
-          <ul class="dishes"><li><strong>S'mores Cake</strong><span>Chocolate ganache and graham crust</span></li></ul>
-        </div>
-      </div>
-    </div>`;
+    <img class="menu-art" src="assets/waiters-bottom.png" alt="" />`;
 }
 
 function renderRsvp(invitation, menu, session, guest2) {
