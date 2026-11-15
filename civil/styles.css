@@ -71,40 +71,6 @@ main {
   padding: 2rem 0.25rem;
 }
 
-/* Octagonal double rule echoing the monogram border, built from stacked clipped layers. */
-.frame {
-  --cut: 2.75rem;
-  position: relative;
-  width: 100%;
-  max-width: 26rem;
-  padding: 12px;
-  background: linear-gradient(155deg, #a9c07a, #87a65a 40%, #9db96d 70%, #7f9f52);
-  clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut));
-}
-
-.frame::before, .frame::after {
-  content: '';
-  position: absolute;
-  clip-path: polygon(var(--c) 0, calc(100% - var(--c)) 0, 100% var(--c), 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, var(--c) 100%, 0 calc(100% - var(--c)), 0 var(--c));
-}
-
-.frame::before { inset: 4px; --c: calc(var(--cut) - 1.7px); background: var(--cream); }
-
-.frame::after {
-  inset: 9px;
-  --c: calc(var(--cut) - 3.7px);
-  background: linear-gradient(200deg, #9fbb6f, #86a55a 55%, #a5bf77);
-}
-
-.frame-inner {
-  --c: calc(var(--cut) - 5px);
-  position: relative;
-  z-index: 1;
-  padding: 3.6rem 1.25rem;
-  background: var(--cream);
-  clip-path: polygon(var(--c) 0, calc(100% - var(--c)) 0, 100% var(--c), 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, var(--c) 100%, 0 calc(100% - var(--c)), 0 var(--c));
-}
-
 .closing { text-align: center; padding: 2rem 0 1rem; }
 .closing h2 { margin-bottom: 0.2rem; }
 .signature { margin: 0; font-size: 1.55rem; }
@@ -356,12 +322,24 @@ textarea { min-height: 6.5rem; resize: vertical; }
 
 .success h2 { margin-top: 0; }
 
+.names { text-align: center; margin: 0.4rem 0 0.2rem; }
+.floral, .menu-art { display: block; width: min(100%, 36rem); height: auto; margin: 0 auto; }
+.names-copy { margin: -0.15rem 0.4rem; }
+.names .invite { margin-top: 0.7rem; }
+.date-line, .date-line strong { font-style: normal; font-weight: 600; }
+.date-line { margin-top: 0.15rem; }
+
+.menu-block { margin: 0.4rem 0 0.2rem; text-align: center; }
+.menu-copy { margin: 0.15rem 0.35rem 0.2rem; }
+.menu-block h2 { margin-bottom: 0.45rem; }
+
 .art { margin: 1.5rem auto; text-align: center; }
 .art img { display: block; width: 100%; height: auto; margin: 0 auto; }
-.art-balloon img { width: min(48vw, 12rem); }
-.art-city-hall img { width: min(100%, 30rem); }
+.art-balloon { margin: 0.2rem auto 0; }
+.art-balloon img { width: min(78vw, 22rem); will-change: transform, opacity; }
+.art-city-hall img { width: min(100%, 34rem); }
 .art-bridge { margin-left: -1.15rem; margin-right: -1.15rem; }
-.art-mistletoe img { width: min(52vw, 12rem); }
+.art-mistletoe img { width: min(58vw, 14rem); }
 
 .reveal {
   opacity: 0;
@@ -371,16 +349,8 @@ textarea { min-height: 6.5rem; resize: vertical; }
 
 .reveal.is-visible { opacity: 1; transform: none; }
 
-.art.is-visible.art-balloon img { animation: drift 7s ease-in-out 1.1s infinite; }
-
-@keyframes drift {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
-  .art.is-visible.art-balloon img { animation: none; }
 }
 
 @media (min-width: 800px) {
