@@ -120,8 +120,8 @@ function renderInvitation(invitation, menu, session) {
     <section class="screen reveal">
       <div class="frame">
         <div class="frame-inner">
+          <p class="newlyweds">Newlyweds</p>
           <h1><span>Monica</span><span class="amp">&amp;</span><span>Nathaniel</span></h1>
-          <p class="family">Villegas</p>
           <p class="invite">${inviteLine(invitation)}</p>
           <p class="date-line"><strong>Wednesday, December 23, 2026</strong></p>
           <p class="date-line"><strong>in San Francisco.</strong></p>
@@ -140,9 +140,9 @@ function renderInvitation(invitation, menu, session) {
       <h2>The Day</h2>
       <ol class="timeline">
         <li><time>10:45 to 11:30 a.m.</time><span>Ceremony on the Fourth Floor Balcony at San Francisco City Hall</span></li>
-        <li><time>11:30 a.m. to 12:15 p.m.</time><span>Group photos on the balcony and outside.</span></li>
+        <li><time>11:30 a.m. to 12:15 p.m.</time><span>Group photos on the balcony and in front of City Hall</span></li>
         <li><time>1:00 to 2:00 p.m.</time><span>Cocktail hour and hors d'oeuvres at Epic Steak</span></li>
-        <li><time>2:00 to 4:00 p.m.</time><span>Coursed lunch and cake</span></li>
+        <li><time>2:00 to 4:00 p.m.</time><span>Coursed lunch and cake cutting</span></li>
         <li><time>4:00 p.m. onward</time><span>Nightcap at a holiday-themed bar. Optional.</span></li>
       </ol>
     </section>
@@ -168,8 +168,8 @@ function renderInvitation(invitation, menu, session) {
     <footer class="closing reveal">
       <h2>With love,</h2>
       <p class="signature">Monica and Nathaniel</p>
-      <p class="fine">Please reply by ${window.WEDDING.rsvpDeadline}.</p>
-      <p class="credit">Hand-drawn art by Madeline Morales.</p>
+      <p class="fine">Please reply by ${window.WEDDING.rsvpDeadline}</p>
+      <p class="credit">Hand-drawn art by Madeline Morales</p>
     </footer>`;
   renderMenu();
   renderRsvp(invitation, menu, session, guest2);
@@ -184,7 +184,7 @@ function inviteLine(invitation) {
   const guest1 = escapeHtml(invitation.guest1 || 'you');
   const guest2 = escapeHtml((invitation.guest2 || '').trim());
   const guests = guest2 ? `their family, ${guest1}, and ${guest2}` : `their family and ${guest1}`;
-  return `cordially invite ${guests} to their private ceremony on`;
+  return `cordially invite ${guests} to their private civil ceremony on`;
 }
 
 function venue(title, place, calendar, side) {
@@ -268,7 +268,7 @@ function renderRsvp(invitation, menu, session, guest2) {
       <label class="field">An optional note for Monica and Nathaniel<textarea name="message" maxlength="500"></textarea></label>
       <div class="hp"><label>Company<input name="company" tabindex="-1" autocomplete="off" /></label></div>
       <p class="form-error" id="form-error" hidden></p>
-      <button type="submit">Send reply</button>
+      <button class="send" type="submit">Send reply</button>
     </form>`;
   document.querySelector('#rsvp-form').addEventListener('submit', event => submitRsvp(event, invitation, menu, session, guests));
 }
@@ -277,7 +277,8 @@ function guestFields(guest) {
   return `<fieldset class="guest-block">
     <legend class="script">${escapeHtml(guest.name)}</legend>
     <div class="choice-row">
-      <label class="choice attend"><input type="radio" name="${guest.key}-attending" value="yes" required /> Will attend</label>
+      <label class="choice attend"><input type="radio" name="${guest.key}-attending" value="reception" required /> Will attend ceremony and reception only</label>
+      <label class="choice attend"><input type="radio" name="${guest.key}-attending" value="bar" /> Will attend ceremony, reception, and bar</label>
       <label class="choice attend"><input type="radio" name="${guest.key}-attending" value="no" /> Cannot attend</label>
     </div>
   </fieldset>`;
@@ -337,19 +338,20 @@ function readForm(form, invitation, menu, guests) {
     return { error: 'Enter the full mailing address.' };
   }
   for (const guest of guests) {
-    const attending = data.get(`${guest.key}-attending`);
-    if (attending !== 'yes' && attending !== 'no') return { error: `Please respond for ${guest.name}.` };
-    const record = {
-      name: guest.name,
-      attending: attending === 'yes',
-    };
-    value.guests.push(record);
+    const plan = data.get(`${guest.key}-attending`);
+    if (plan !== 'reception' && plan !== 'bar' && plan !== 'no') return { error: `Please respond for ${guest.name}.` };
+    value.guests.push({ name: guest.name, plan });
   }
   return { value };
 }
 
 function showSuccess(payload, preview) {
-  const names = payload.value.guests.map(guest => `${guest.name} will ${guest.attending ? 'attend' : 'not attend'}`).join('. ');
+  const plans = {
+    reception: 'will attend the ceremony and reception',
+    bar: 'will attend the ceremony, reception, and bar',
+    no: 'cannot attend'
+  };
+  const names = payload.value.guests.map(guest => `${guest.name} ${plans[guest.plan]}`).join('. ');
   document.querySelector('#rsvp-panel').innerHTML = `
     <div class="success">
       <h2>Thank you</h2>
