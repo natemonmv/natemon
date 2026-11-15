@@ -148,7 +148,7 @@ function renderInvitation(invitation, menu, session) {
         <li><time>4:00 p.m. onward</time><span>Nightcap at a holiday-themed bar. Optional.</span></li>
       </ol>
     </section>
-    ${art('mistletoe.png', 'mistletoe')}
+    <section class="menu-block reveal" id="menu-panel"></section>
     <section class="panel reveal">
       <h2>Afterward</h2>
       <p>After the reception, join us for a nightcap at a holiday-themed bar. It's a festive tradition Monica and Nathaniel have shared since they started dating, and they want to continue it with you all. Details to be shared here closer to the day.</p>
@@ -163,7 +163,7 @@ function renderInvitation(invitation, menu, session) {
       <p>For San Francisco City Hall, the parking garage in front of the building is the best option.</p>
       <p>For Epic Steak, Hills Plaza parking garage is the closest option on the Embarcadero. There is no valet.</p>
     </section>
-    <section class="menu-block reveal" id="menu-panel"></section>
+    ${art('mistletoe.png', 'mistletoe')}
     <section class="panel reveal" id="rsvp-panel"></section>
     <footer class="closing reveal">
       <h2>With love,</h2>
