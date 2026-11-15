@@ -15,8 +15,6 @@
 
 html { scroll-behavior: smooth; }
 
-html, body { overflow-x: clip; }
-
 body {
   margin: 0;
   min-height: 100vh;
@@ -367,11 +365,11 @@ textarea { min-height: 6.5rem; resize: vertical; }
 
 .menu-art {
   display: block;
-  width: min(100vw, 40rem);
+  width: calc(100% + 2.3rem);
   max-width: none;
   height: auto;
-  margin-left: 50%;
-  transform: translateX(-50%);
+  margin-left: -1.15rem;
+  margin-right: -1.15rem;
 }
 
 .menu-art-top {
@@ -380,7 +378,7 @@ textarea { min-height: 6.5rem; resize: vertical; }
   margin-bottom: -4.15rem;
   pointer-events: none;
 }
-.menu-copy { margin: 0 auto 0.4rem; max-width: 17rem; }
+.menu-copy { position: relative; z-index: 2; display: flow-root; margin: 0 auto 0.4rem; max-width: 17rem; }
 .menu-intro { margin: 0.45rem auto 0; max-width: 15rem; font-style: italic; font-size: 0.82rem; line-height: 1.45; }
 .menu-copy .menu-course:last-child { margin-bottom: 0.6rem; }
 
@@ -389,31 +387,64 @@ textarea { min-height: 6.5rem; resize: vertical; }
 
 .sky {
   position: relative;
-  width: 100vw;
+  width: calc(100% + 2.3rem);
   height: 100vh;
-  height: 100lvh;
-  margin: 6vh 0 6vh calc(50% - 50vw);
+  height: 100dvh;
+  margin: 6vh -1.15rem;
   overflow: hidden;
 }
 
-.sky img {
-  position: absolute;
-  height: auto;
-  max-width: none;
-  will-change: transform;
-}
-
 .hero-balloon {
+  position: absolute;
   z-index: 3;
   left: 50%;
   top: 50%;
   width: min(62vw, 19rem);
+  height: auto;
   transform: translate(-50%, -50%);
+  animation: hero-bob 9s ease-in-out infinite alternate;
 }
 
-.drifter { left: 0; top: 0; transform: translate(-200vw, 0); }
-.drifter-small { z-index: 2; width: min(30vw, 9rem); }
-.drifter-smaller { z-index: 1; width: min(19vw, 6rem); }
+.drifter {
+  position: absolute;
+  left: 0;
+  z-index: 1;
+  width: min(30vw, 9rem);
+  animation: cross-right 50s linear infinite;
+}
+.drifter img {
+  display: block;
+  width: 100%;
+  height: auto;
+  animation: bob 7s ease-in-out infinite alternate;
+}
+.drifter-small { top: 30%; animation-delay: -12s; }
+.drifter-smaller {
+  z-index: 2;
+  top: 54%;
+  width: min(19vw, 6rem);
+  animation-name: cross-left;
+  animation-duration: 64s;
+  animation-delay: -33s;
+}
+.drifter-smaller img { animation-duration: 9s; animation-delay: -3s; }
+
+@keyframes cross-right {
+  from { transform: translate3d(-130%, 0, 0); }
+  to { transform: translate3d(calc(100vw + 40%), 6vh, 0); }
+}
+@keyframes cross-left {
+  from { transform: translate3d(calc(100vw + 10%), 4vh, 0); }
+  to { transform: translate3d(-150%, -2vh, 0); }
+}
+@keyframes bob {
+  from { transform: translateY(-8px) rotate(-2.5deg); }
+  to { transform: translateY(10px) rotate(2.5deg); }
+}
+@keyframes hero-bob {
+  from { transform: translate(-50%, -54%) rotate(-1.2deg); }
+  to { transform: translate(-50%, -46%) rotate(1.2deg); }
+}
 
 .art-mistletoe {
   min-height: 100vh;
@@ -437,9 +468,6 @@ textarea { min-height: 6.5rem; resize: vertical; }
 
 .reveal.is-visible { opacity: 1; transform: none; }
 
-@media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1; transform: none; transition: none; }
-}
 
 @media (min-width: 800px) {
   main { padding-top: 2.5rem; }
@@ -447,7 +475,3 @@ textarea { min-height: 6.5rem; resize: vertical; }
   .venue-art { width: 100%; margin-left: 0; margin-right: 0; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .drifter { display: none; }
-  .art-mistletoe img { animation: none; }
-}
