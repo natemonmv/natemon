@@ -40,7 +40,7 @@ const MENU_PREVIEW = [
     note: '',
     dishes: [
       ['6oz Grilled Filet Mignon', 'Creamed spinach, roasted sunchoke, bordelaise'],
-      ['Northern Halibut', 'Butter beans, roasted mushrooms, spinach']
+      ['Pacific Salmon', 'Butter beans, roasted mushrooms, spinach']
     ]
   }
 ];
