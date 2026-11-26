@@ -5,28 +5,44 @@ init();
 function init() {
   const days = window.CALL.days.filter(day => day.published !== false);
   const byId = Object.fromEntries(days.map(day => [day.id, day]));
+  const listed = days.filter(day => day.listed !== false);
+
+  function pathDay() {
+    const path = location.pathname.replace(/\/index\.html$/, '').replace(/\/+$/, '');
+    const id = path.split('/').pop();
+    return byId[id] || null;
+  }
 
   function selected() {
+    const direct = pathDay();
+    if (direct) return direct;
     const id = location.hash.replace('#', '');
-    return byId[id] || days[0];
+    if (listed.some(day => day.id === id)) return byId[id];
+    return listed[0] || days[0];
   }
 
   function draw() {
     const day = selected();
-    if (location.hash !== `#${day.id}`) history.replaceState(null, '', `#${day.id}`);
+    const direct = pathDay();
+    const showSwitch = !direct && listed.length > 1;
+    if (!direct && !showSwitch && location.hash) {
+      history.replaceState(null, '', location.pathname + location.search);
+    } else if (showSwitch && location.hash !== `#${day.id}`) {
+      history.replaceState(null, '', `#${day.id}`);
+    }
     document.title = `${day.label} · Call sheet`;
     const crew = window.CALL.people.filter(person => person.days.includes(day.id));
     app.innerHTML = `
       <header class="top">
         <p class="kicker">Call sheet</p>
         <h1>${escapeHtml(day.title)}</h1>
-        <div class="switch" role="tablist" aria-label="Event day">
-          ${days.map(item => `
+        ${showSwitch ? `<div class="switch" role="tablist" aria-label="Event day">
+          ${listed.map(item => `
             <button type="button" role="tab" id="tab-${item.id}" aria-selected="${item.id === day.id}" aria-controls="day" data-day="${item.id}">${escapeHtml(item.label)}</button>
           `).join('')}
-        </div>
+        </div>` : ''}
       </header>
-      <div id="day" role="tabpanel" aria-labelledby="tab-${day.id}">
+      <div id="day"${showSwitch ? ` role="tabpanel" aria-labelledby="tab-${day.id}"` : ''}>
         ${window.CALL.note ? `<p class="notice">${escapeHtml(window.CALL.note)}</p>` : ''}
         ${shotlist(day)}
         ${section('Timeline', timeline(day))}
