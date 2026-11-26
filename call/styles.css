@@ -129,7 +129,7 @@ h2 {
 
 .timeline li {
   display: grid;
-  grid-template-columns: 6.6rem 1fr;
+  grid-template-columns: 7.6rem minmax(0, 1fr);
   gap: 0.35rem 0.75rem;
   padding: 0.9rem 0.95rem;
   border-top: 1px solid var(--line);
@@ -141,7 +141,7 @@ time {
   color: var(--deep);
   font-weight: 650;
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+  line-height: 1.25;
 }
 
 .timeline strong, .cards strong { display: block; font-size: 1.02rem; }
@@ -154,7 +154,7 @@ time {
   font-size: 0.92rem;
 }
 
-.cards a, .cards .row, .tickets button {
+.cards a, .cards .row {
   display: block;
   width: 100%;
   padding: 0.9rem 0.95rem;
@@ -166,21 +166,6 @@ time {
   text-align: left;
   text-decoration: none;
 }
-
-.tickets li:first-child button { border-top: 0; }
-
-.pass {
-  padding: 0 0.7rem 0.9rem;
-  background: white;
-}
-
-.pass img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.ticket-note { margin: 0 0 0.55rem; }
 
 .cards li:first-child a,
 .cards li:first-child .row { border-top: 0; }
