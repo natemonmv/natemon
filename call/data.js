@@ -58,18 +58,20 @@ window.CALL = {
         }
       ],
       timeline: [
-        { time: '9:00 to 9:40 a.m.', text: 'Photo and video begin', detail: 'Westin St. Francis, in the room and at the bar.' },
-        { time: '10:00 to 11:00 a.m.', text: 'City Hall photos and video', detail: 'Nate and Monica only.' },
-        { time: '10:45 a.m.', text: 'Guests arrive', detail: 'Seating begins. Beatriz briefs guests on the Fourth Floor Balcony.' },
+        { time: '9:00 a.m.', text: 'Photo and video begin', detail: 'Westin St. Francis, in the room and at the bar.' },
+        { time: '9:40 a.m.', text: 'Travel to City Hall', detail: '' },
+        { time: '10:00 a.m.', text: 'City Hall photos and video', detail: 'Nate and Monica only.' },
+        { time: '10:45 a.m.', text: 'Seating begins', detail: 'Fourth Floor Balcony. Beatriz briefs guests.' },
         { time: '11:00 a.m.', text: 'Ceremony begins', detail: 'Fourth Floor Balcony.' },
         { time: '11:25 a.m.', text: 'First dance', detail: '' },
-        { time: '11:30 a.m. to 12:00 p.m.', text: 'Photos and video resume', detail: 'On the balcony, with family and friends.' },
-        { time: '12:00 to 12:30 p.m.', text: 'Travel to Epic Steak', detail: '' },
-        { time: '12:30 to 2:00 p.m.', text: 'Photos and cocktail hour', detail: 'Nate and Monica photos behind Epic Steak, with the bay bridge backdrop. Cocktail hour on the terrace with family and friends.' },
+        { time: '11:30 a.m.', text: 'Group photos', detail: 'On the balcony, with family and friends.' },
+        { time: '12:00 p.m.', text: 'Travel to Epic Steak', detail: '' },
+        { time: '12:30 p.m.', text: 'Bay Bridge backdrop photos', detail: 'Nate and Monica only.' },
+        { time: '1:00 p.m.', text: 'Cocktail hour begins', detail: 'Candid photos and videos on the terrace with family and friends.' },
         { time: '2:00 p.m.', text: 'Lunch begins', detail: 'Bay terrace, with candid photos.' },
         { time: '3:30 p.m.', text: 'Cake cutting', detail: '' },
-        { time: '4:00 to 4:30 p.m.', text: 'Travel to the holiday bar', detail: 'Location to be confirmed.' },
-        { time: '5:00 to 7:00 p.m.', text: 'Holiday bar', detail: '' }
+        { time: '4:00 p.m.', text: 'Travel to the holiday bar', detail: 'Location to be confirmed.' },
+        { time: '5:00 p.m.', text: 'Holiday bar', detail: 'Candid photos and videos.' }
       ]
     }
   ]
