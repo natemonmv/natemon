@@ -16,14 +16,6 @@ window.CALL = {
       label: 'Nov 11',
       title: 'Wednesday, November 11',
       shotlist: 'https://photos.app.goo.gl/sT26dAxFkwreMzkE8',
-      ticketNote: 'Photo ID may be required.',
-      tickets: [
-        { who: 'Nate and Monica', numbers: '12457174 and 12457175', file: 'tickets/nate-monica.png' },
-        { who: 'Reina', numbers: '12457176', file: 'tickets/reina.png' },
-        { who: 'Madeline and Rudy', numbers: '12651543 and 12651544', file: 'tickets/madeline-rudy.png' },
-        { who: 'Marty', numbers: '12457177', file: 'tickets/marty.png' },
-        { who: 'Fiel and Marco', numbers: '12457178 and 12457179', file: 'tickets/fiel-marco.png' }
-      ],
       places: [
         {
           name: 'Filoli Historic House & Garden',
@@ -47,29 +39,37 @@ window.CALL = {
       shotlist: 'https://photos.app.goo.gl/gyLNhim8HMSh25xN7',
       places: [
         {
+          name: 'The Westin St. Francis',
+          lines: ['335 Powell Street', 'San Francisco, CA 94102'],
+          note: 'Photo and video begin in the room and at the bar.',
+          maps: 'https://www.google.com/maps/search/?api=1&query=The%20Westin%20St.%20Francis%20335%20Powell%20Street%20San%20Francisco'
+        },
+        {
           name: 'San Francisco City Hall',
           lines: ['1 Dr. Carlton B. Goodlett Place', 'Fourth Floor Balcony', 'San Francisco, CA 94102'],
-          note: 'Ceremony and guest photos. Ilana plays here only.',
+          note: 'Guest arrival, ceremony, and balcony photos. Ilana plays here only.',
           maps: 'https://www.google.com/maps/search/?api=1&query=San%20Francisco%20City%20Hall%201%20Dr%20Carlton%20B%20Goodlett%20Pl'
         },
         {
           name: 'Epic Steak',
           lines: ['369 The Embarcadero', 'San Francisco, CA 94105'],
-          note: 'Cocktail hour and lunch. No valet parking.',
+          note: 'Cocktail hour on the terrace and lunch in the bay terrace. No valet parking.',
           maps: 'https://www.google.com/maps/search/?api=1&query=Epic%20Steak%20369%20The%20Embarcadero%20San%20Francisco'
         }
       ],
       timeline: [
-        { time: '9:00 a.m.', text: 'Photo and video begin', detail: 'Or 10:00 a.m. The start time is still tentative.' },
-        { time: '10:45 a.m.', text: 'Guests arrive', detail: 'Guests arrive and begin seating.' },
-        { time: '11:00 a.m.', text: 'Ceremony begins', detail: 'Fourth Floor Balcony. The full ceremony is still being planned with Beatriz.' },
+        { time: '9:00 to 9:40 a.m.', text: 'Photo and video begin', detail: 'Westin St. Francis, in the room and at the bar.' },
+        { time: '10:00 to 11:00 a.m.', text: 'City Hall photos and video', detail: 'Nate and Monica only.' },
+        { time: '10:45 a.m.', text: 'Guests arrive', detail: 'Seating begins. Beatriz briefs guests on the Fourth Floor Balcony.' },
+        { time: '11:00 a.m.', text: 'Ceremony begins', detail: 'Fourth Floor Balcony.' },
         { time: '11:25 a.m.', text: 'First dance', detail: '' },
-        { time: '11:30 a.m.', text: 'Photos begin', detail: 'On the balcony and in front of City Hall.' },
-        { time: '12:00 p.m.', text: 'Photos end', detail: '' },
-        { time: '12:30 p.m.', text: 'Arrive at Epic Steak', detail: 'Photo and video on arrival, behind Epic Steak with the bay bridge backdrop.' },
-        { time: '1:00 p.m.', text: 'Cocktail hour', detail: 'Hors d’oeuvres until 2:00 p.m.' },
-        { time: '2:00 p.m.', text: 'Lunch', detail: 'Three courses, dessert, and cake cutting until 4:00 p.m.' },
-        { time: '4:00 p.m.', text: 'Holiday bar', detail: 'Location is not booked yet.' }
+        { time: '11:30 a.m. to 12:00 p.m.', text: 'Photos and video resume', detail: 'On the balcony, with family and friends.' },
+        { time: '12:00 to 12:30 p.m.', text: 'Travel to Epic Steak', detail: '' },
+        { time: '12:30 to 2:00 p.m.', text: 'Photos and cocktail hour', detail: 'Nate and Monica photos behind Epic Steak, with the bay bridge backdrop. Cocktail hour on the terrace with family and friends.' },
+        { time: '2:00 p.m.', text: 'Lunch begins', detail: 'Bay terrace, with candid photos.' },
+        { time: '3:30 p.m.', text: 'Cake cutting', detail: '' },
+        { time: '4:00 to 4:30 p.m.', text: 'Travel to the holiday bar', detail: 'Location to be confirmed.' },
+        { time: '5:00 to 7:00 p.m.', text: 'Holiday bar', detail: '' }
       ]
     }
   ]
