@@ -1,4 +1,5 @@
-// Add a later day to `days` when it should appear. Leave published set to false until then.
+// Leave published set to false until a day should exist.
+// Leave listed set to false to keep it off the main sheet. It is only at /call/<id>.
 window.CALL = {
   note: 'Schedule may change. Nate will let you know.',
   people: [
@@ -13,6 +14,7 @@ window.CALL = {
     {
       id: '1111',
       published: true,
+      listed: false,
       label: 'Nov 11',
       title: 'Wednesday, November 11',
       shotlist: 'https://photos.app.goo.gl/sT26dAxFkwreMzkE8',
