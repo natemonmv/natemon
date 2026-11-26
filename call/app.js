@@ -1,142 +1,76 @@
-const app = document.querySelector('#app');
-
-init();
-
-function init() {
-  const days = window.CALL.days.filter(day => day.published !== false);
-  const byId = Object.fromEntries(days.map(day => [day.id, day]));
-
-  function selected() {
-    const id = location.hash.replace('#', '');
-    return byId[id] || days[0];
-  }
-
-  function draw() {
-    const day = selected();
-    if (location.hash !== `#${day.id}`) history.replaceState(null, '', `#${day.id}`);
-    document.title = `${day.label} · Call sheet`;
-    const crew = window.CALL.people.filter(person => person.days.includes(day.id));
-    app.innerHTML = `
-      <header class="top">
-        <p class="kicker">Call sheet</p>
-        <h1>${escapeHtml(day.title)}</h1>
-        <div class="switch" role="tablist" aria-label="Event day">
-          ${days.map(item => `
-            <button type="button" role="tab" id="tab-${item.id}" aria-selected="${item.id === day.id}" aria-controls="day" data-day="${item.id}">${escapeHtml(item.label)}</button>
-          `).join('')}
-        </div>
-      </header>
-      <div id="day" role="tabpanel" aria-labelledby="tab-${day.id}">
-        ${window.CALL.note ? `<p class="notice">${escapeHtml(window.CALL.note)}</p>` : ''}
-        ${shotlist(day)}
-        ${section('Timeline', timeline(day))}
-        ${section('Places', places(day))}
-        ${tickets(day)}
-        ${section('People', people(crew))}
-      </div>`;
-    app.querySelectorAll('[data-day]').forEach(button => {
-      button.addEventListener('click', () => {
-        location.hash = button.dataset.day;
-      });
-    });
-    app.querySelectorAll('[data-ticket]').forEach(button => {
-      button.addEventListener('click', () => {
-        const open = button.getAttribute('aria-expanded') === 'true';
-        app.querySelectorAll('[data-ticket]').forEach(other => setTicket(other, false));
-        setTicket(button, !open);
-      });
-    });
-  }
-
-  window.addEventListener('hashchange', draw);
-  draw();
-}
-
-function shotlist(day) {
-  const url = (day.shotlist || '').trim();
-  if (!url) {
-    return `<p class="shot waiting">Shot list link not added yet</p>`;
-  }
-  return `<a class="shot" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">Click for photo shot list</a>`;
-}
-
-function setTicket(button, open) {
-  button.setAttribute('aria-expanded', open ? 'true' : 'false');
-  button.nextElementSibling.hidden = !open;
-  const action = button.querySelector('.action');
-  if (action) action.textContent = open ? 'Tap to hide' : 'Tap to show';
-}
-
-function tickets(day) {
-  const passes = day.tickets || [];
-  if (!passes.length) return '';
-  return `
-    <section>
-      <h2>Tickets</h2>
-      <p class="notice ticket-note">${escapeHtml(day.ticketNote || 'Photo ID may be required.')}</p>
-      <ul class="cards tickets">
-        ${passes.map((pass, index) => `
-          <li>
-            <button type="button" data-ticket aria-expanded="false" aria-controls="ticket-${index}">
-              <strong>${escapeHtml(pass.who)}</strong>
-              <span>Ticket ${escapeHtml(pass.numbers)}</span>
-              <span class="action">Tap to show</span>
-            </button>
-            <div class="pass" id="ticket-${index}" hidden>
-              <img src="${escapeHtml(pass.file)}" alt="Filoli ticket for ${escapeHtml(pass.who)}">
-            </div>
-          </li>`).join('')}
-      </ul>
-    </section>`;
-}
-
-function section(title, body) {
-  return `<section><h2>${title}</h2>${body}</section>`;
-}
-
-function timeline(day) {
-  if (!day.timeline.length) return `<p class="empty">Schedule for this day isn’t on the sheet yet.</p>`;
-  return `<ol class="timeline">${day.timeline.map(item => `
-    <li>
-      <time>${escapeHtml(item.time)}</time>
-      <div><strong>${escapeHtml(item.text)}</strong>${item.detail ? `<span>${escapeHtml(item.detail)}</span>` : ''}</div>
-    </li>`).join('')}</ol>`;
-}
-
-function places(day) {
-  if (!day.places.length) return `<p class="empty">Address for this day isn’t on the sheet yet.</p>`;
-  return `<ul class="cards">${day.places.map(place => `
-    <li>
-      <a href="${escapeHtml(place.maps)}">
-        <strong>${escapeHtml(place.name)}</strong>
-        ${place.lines.map(line => `<span>${escapeHtml(line)}</span>`).join('')}
-        ${place.note ? `<em>${escapeHtml(place.note)}</em>` : ''}
-        <span class="action">Open in Maps</span>
-      </a>
-    </li>`).join('')}</ul>`;
-}
-
-function people(crew) {
-  if (!crew.length) return `<p class="empty">No one is listed for this day yet.</p>`;
-  return `<ul class="cards">${crew.map(person => {
-    const phone = String(person.phone || '').trim();
-    const name = String(person.name || '').trim();
-    const dial = phone.replace(/[^\d+]/g, '');
-    const inner = `
-      <strong>${escapeHtml(name || person.role)}</strong>
-      <span>${escapeHtml(name ? person.role : 'Name not added')}</span>
-      <span class="action">${phone ? escapeHtml(phone) : 'Number not added'}</span>`;
-    if (!dial) return `<li><div class="row">${inner}</div></li>`;
-    return `<li><a href="tel:${dial}">${inner}</a></li>`;
-  }).join('')}</ul>`;
-}
-
-function escapeHtml(value) {
-  return String(value ?? '').replace(/[&<>"']/g, char => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  }[char]));
-}
+// Add a later day to `days` when it should appear. Leave published set to false until then.
+window.CALL = {
+  note: 'Schedule may change. Nate will let you know.',
+  people: [
+    { name: 'Marty', role: 'Photographer', phone: '650-207-4346', days: ['1111', '1223'] },
+    { name: 'Fiel Jamil', role: 'Videographer', phone: '650-732-6223', days: ['1111', '1223'] },
+    { name: 'Reina Dawe', role: 'Officiant', phone: '650-501-9047', days: ['1111'] },
+    { name: 'Beatriz Orozco', role: 'Officiant and day-of coordinator', phone: '510-509-0966', days: ['1223'] },
+    { name: 'Ilana Thomas', role: 'Violinist', phone: '925-784-9611', days: ['1223'] },
+    { name: 'Madeline Morales', role: 'Sister and Witness', phone: '650-534-5959', days: ['1111', '1223'] }
+  ],
+  days: [
+    {
+      id: '1111',
+      published: true,
+      label: 'Nov 11',
+      title: 'Wednesday, November 11',
+      shotlist: 'https://photos.app.goo.gl/sT26dAxFkwreMzkE8',
+      places: [
+        {
+          name: 'Filoli Historic House & Garden',
+          lines: ['86 Cañada Road', 'Woodside, CA 94062'],
+          note: 'Doors open at 10:00 a.m.',
+          maps: 'https://www.google.com/maps/search/?api=1&query=Filoli%20Historic%20House%20%26%20Garden%2086%20Canada%20Road%20Woodside'
+        }
+      ],
+      timeline: [
+        { time: '10:00 a.m.', text: 'Doors open', detail: 'Marty leads photography. Fiel leads video with behind-the-scenes-style coverage.' },
+        { time: '11:00 a.m.', text: 'Ceremony begins', detail: 'A short ceremony. Location decided on the day-of.' },
+        { time: '11:11 a.m.', text: 'Pronouncement', detail: 'Pronouncement of marriage, then signing of the license. The signing location will be decided on the day. Photo coverage ends after the signing.' },
+        { time: '12:00 p.m.', text: 'Video coverage ends', detail: '' }
+      ]
+    },
+    {
+      id: '1223',
+      published: true,
+      label: 'Dec 23',
+      title: 'Wednesday, December 23',
+      shotlist: 'https://photos.app.goo.gl/gyLNhim8HMSh25xN7',
+      places: [
+        {
+          name: 'The Westin St. Francis',
+          lines: ['335 Powell Street', 'San Francisco, CA 94102'],
+          note: 'Photo and video begin in the room and at the bar.',
+          maps: 'https://www.google.com/maps/search/?api=1&query=The%20Westin%20St.%20Francis%20335%20Powell%20Street%20San%20Francisco'
+        },
+        {
+          name: 'San Francisco City Hall',
+          lines: ['1 Dr. Carlton B. Goodlett Place', 'Fourth Floor Balcony', 'San Francisco, CA 94102'],
+          note: 'Guest arrival, ceremony, and balcony photos. Ilana plays here only.',
+          maps: 'https://www.google.com/maps/search/?api=1&query=San%20Francisco%20City%20Hall%201%20Dr%20Carlton%20B%20Goodlett%20Pl'
+        },
+        {
+          name: 'Epic Steak',
+          lines: ['369 The Embarcadero', 'San Francisco, CA 94105'],
+          note: 'Cocktail hour on the terrace and lunch in the bay terrace. No valet parking.',
+          maps: 'https://www.google.com/maps/search/?api=1&query=Epic%20Steak%20369%20The%20Embarcadero%20San%20Francisco'
+        }
+      ],
+      timeline: [
+        { time: '9:00 to 9:40 a.m.', text: 'Photo and video begin', detail: 'Westin St. Francis, in the room and at the bar.' },
+        { time: '10:00 to 11:00 a.m.', text: 'City Hall photos and video', detail: 'Nate and Monica only.' },
+        { time: '10:45 a.m.', text: 'Guests arrive', detail: 'Seating begins. Beatriz briefs guests on the Fourth Floor Balcony.' },
+        { time: '11:00 a.m.', text: 'Ceremony begins', detail: 'Fourth Floor Balcony.' },
+        { time: '11:25 a.m.', text: 'First dance', detail: '' },
+        { time: '11:30 a.m. to 12:00 p.m.', text: 'Photos and video resume', detail: 'On the balcony, with family and friends.' },
+        { time: '12:00 to 12:30 p.m.', text: 'Travel to Epic Steak', detail: '' },
+        { time: '12:30 to 2:00 p.m.', text: 'Photos and cocktail hour', detail: 'Nate and Monica photos behind Epic Steak, with the bay bridge backdrop. Cocktail hour on the terrace with family and friends.' },
+        { time: '2:00 p.m.', text: 'Lunch begins', detail: 'Bay terrace, with candid photos.' },
+        { time: '3:30 p.m.', text: 'Cake cutting', detail: '' },
+        { time: '4:00 to 4:30 p.m.', text: 'Travel to the holiday bar', detail: 'Location to be confirmed.' },
+        { time: '5:00 to 7:00 p.m.', text: 'Holiday bar', detail: '' }
+      ]
+    }
+  ]
+};
